@@ -1,4 +1,4 @@
-from sqlalchemy import Column, Integer, String, DateTime
+from sqlalchemy import BIGINT, Column, Integer, String, DateTime
 from sqlalchemy.orm import relationship
 
 from database import Base
@@ -7,7 +7,7 @@ from database import Base
 class User(Base):
     __tablename__ = "users"
 
-    id = Column(Integer, primary_key=True)
+    id = Column(BIGINT, primary_key=True)
     platform_type = Column(String, nullable=False)
     platform_user_id = Column(String, nullable=False)
     user_name = Column(String, nullable=True)
