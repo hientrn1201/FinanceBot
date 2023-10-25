@@ -1,3 +1,4 @@
+import uuid
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import load_only
 from sqlalchemy import exc

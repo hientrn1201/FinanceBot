@@ -22,17 +22,9 @@ def upgrade() -> None:
     op.create_table(
         "users",
         sa.Column("id", sa.Integer, primary_key=True),
-        sa.Column('platform_type', sa.String, nullable=False),
-        sa.Column('platform_user_id', sa.String, nullable=False),
         sa.Column('user_name', sa.String, nullable=True),
         sa.Column('created_at', sa.DateTime, nullable=False),
         sa.Column('updated_at', sa.DateTime, nullable=False),
-    )
-    op.create_index(
-        index_name='index_uniq_user_in_platform',
-        table_name='users',
-        columns=['platform_user_id', 'platform_type'],
-        unique=True
     )
 
 
