@@ -22,9 +22,10 @@ def upgrade() -> None:
     op.create_table(
         "users",
         sa.Column("id", sa.BIGINT, primary_key=True),
-        sa.Column('user_name', sa.String, nullable=True),
-        sa.Column('created_at', sa.DateTime, nullable=False),
-        sa.Column('updated_at', sa.DateTime, nullable=False),
+        sa.Column('last_name', sa.String, nullable=True),
+        sa.Column('first_name', sa.String, nullable=True),
+        sa.Column('created_at', sa.DateTime, nullable=True),
+        sa.Column('updated_at', sa.DateTime, nullable=True),
     )
 
 

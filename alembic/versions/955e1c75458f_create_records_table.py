@@ -21,13 +21,13 @@ depends_on: Union[str, Sequence[str], None] = None
 def upgrade() -> None:
     op.create_table(
         'records',
-        sa.Column('id', sa.Integer, primary_key=True),
-        sa.Column('user_id', sa.Integer, nullable=False),
+        sa.Column('id', sa.String, primary_key=True),
+        sa.Column('user_id', sa.BIGINT, nullable=False),
+        sa.Column('category_id', sa.String, nullable=False),
         sa.Column('amount', sa.Float, nullable=False),
-        sa.Column('categories_id', sa.Integer, nullable=False),
         sa.Column('note', sa.String, nullable=True),
-        sa.Column('created_at', sa.DateTime, nullable=False),
-        sa.Column('updated_at', sa.DateTime, nullable=False)
+        sa.Column('created_at', sa.DateTime, nullable=True),
+        sa.Column('updated_at', sa.DateTime, nullable=True)
     )
 
 
