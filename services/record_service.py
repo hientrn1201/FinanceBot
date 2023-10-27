@@ -1,4 +1,3 @@
-import datetime
 from database.services.record import RecordService
 
 
@@ -13,7 +12,7 @@ class RecordManagementService():
     def init_service(self):
         self.record_service = RecordService(self.session)
 
-    def create_record(self, user_id, category_id, description, amount):
+    def create_record(self, user_id, category_id, amount, note):
         user = self.user_management_service.get_user_by_id(user_id)
 
         if not user:
@@ -28,10 +27,8 @@ class RecordManagementService():
         record = self.record_service.create(
             user_id=user.id,
             category_id=category.id,
-            description=description,
             amount=amount,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            note=note,
         )
 
         return record
@@ -64,7 +61,6 @@ class RecordManagementService():
         record = self.record_service.update(
             record,
             **data,
-            updated_at=datetime.utcnow()
         )
 
         return record

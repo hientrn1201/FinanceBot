@@ -1,5 +1,4 @@
-import datetime
-from database.services.user_service import UserService
+from database.services.user import UserService
 
 
 class UserManagementService():
@@ -10,12 +9,11 @@ class UserManagementService():
     def init_service(self):
         self.user_service = UserService(self.session)
 
-    def create_user(self, id, user_name):
+    def create_user(self, id, last_name, first_name):
         user = self.user_service.create(
             id=id,
-            user_name=user_name,
-            created_at=datetime.utcnow(),
-            updated_at=datetime.utcnow()
+            last_name=last_name,
+            first_name=first_name,
         )
 
         return user
