@@ -1,5 +1,5 @@
-from models import Category
-from base import BaseService
+from database.models import Category
+from database.services.base import BaseService
 from sqlalchemy.orm import Session
 
 

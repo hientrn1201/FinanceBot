@@ -1,5 +1,5 @@
-from models import User
-from base import BaseService
+from database.models import User
+from database.services.base import BaseService
 from sqlalchemy.orm import Session
 
 

@@ -57,7 +57,7 @@ class BaseService(object):
             sql_string = sql_string.options(load_only(*select_columns))
         return sql_string
 
-    def create(self, flush=True, mapping=None, model=None, **data):
+    def create(self, mapping=None, model=None, **data):
         try:
             if model:
                 obj = model()
@@ -74,62 +74,30 @@ class BaseService(object):
             if 'id' not in data:
                 obj.id = str(uuid.uuid4())
             self.session.add(obj)
-            if flush:
-                self.session.flush()
+            self.session.commit()
+            self.session.refresh(obj)
             return obj
         except exc.IntegrityError as e:
             raise e
 
-    def bulk_create(self, object_infos, model=None):
-        if not model:
-            model = self.model
-        for i in range(len(object_infos)):
-            if 'id' not in object_infos[i]:
-                object_infos[i]['id'] = str(uuid.uuid4())
-        return self.session.bulk_insert_mappings(
-            model,
-            object_infos,
-            return_defaults=True
-        )
-
-    def update(self, obj, flush=True, only=None, **data):
+    def update(self, obj, only=None, **data):
         if obj:
             for k in data:
                 if hasattr(obj, k) and (only is None or k in only):
                     setattr(obj, k, data.get(k))
-        if flush:
-            self.session.flush()
+        self.session.commit()
+        self.session.refresh(obj)
         return obj
 
-    def bulk_update(self, records, model=None):
-        if not model:
-            model = self.model
-        return self.session.bulk_update_mappings(model, records)
-
-    def upsert(self, filter_info, new_info):
-        new_objects = self.find(
-            **filter_info
-        )
-        if not new_objects:
-            new_objects = [self.create(**new_info)]
-            return new_objects
-        for new_object in new_objects:
-            self.update(
-                new_object,
-                **new_info
-            )
-        return new_objects
-
-    def delete(self, obj, flush=True):
+    def delete(self, obj):
         try:
             self.session.delete(obj)
-            if flush:
-                self.session.flush()
+            self.session.commit()
             return True
         except exc.IntegrityError as e:
             raise e
 
-    def delete_by_condition(self, flush=True, **conditions):
+    def delete_by_condition(self, **conditions):
         query = self.session.query(self.model)
         for key, value in conditions.items():
             if isinstance(value, list):
@@ -138,8 +106,7 @@ class BaseService(object):
             query = query.filter(getattr(self.model, key) == value)
         try:
             query.delete()
-            if flush:
-                self.session.flush()
+            self.session.commit()
             return True
         except exc.IntegrityError as e:
             raise e
