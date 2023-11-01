@@ -10,7 +10,7 @@ class ProcessChatService():
             '/spend': self.add_spending,
             '/income': self.add_income,
             # '/get_records': self.get_records,
-            # '/get_categories': self.get_categories,
+            '/get_categories': self.get_categories,
             # '/update_record': self.update_record,
             # '/update_category': self.update_category,
             # '/delete_record': self.delete_record,
@@ -19,6 +19,7 @@ class ProcessChatService():
 
     def process(self, data):
         user_id = data['message']['from']['id']
+        self.chat_id = data['message']['chat']['id']
         if not user_id:
             return "Please use the bot in a private chat"
         user = self.user_mangement_service.get_user_by_id(user_id)
@@ -45,42 +46,33 @@ class ProcessChatService():
     def help(self, user, text):
         return "Some common commands:\nRecord spending: /spend <amount>, <category>, <description>\nRecord income: /income <amount>, <category>, <description>"
 
+    def get_categories(self, user, text):
+        filter_info = {
+            'user_id': user.id
+        }
+        categories = self.category_service.get_categories(**filter_info)
+        return_text = "Your categories are (id, description):\n"
+        return return_text+'\n'.join([f"{c.id},{c.description}" for c in categories])
+
     def add_income(self, user, text):
         components = text.split(',', 2)
-        amount = components[0]
-        category = components[1]
+        amount = float(components[0])
+        category = components[1].strip()
         description = components[2] or ''
-        amount = float(amount)
-        category = category.strip()
-        description = description.strip()
+        category = category
+        description = description.strip().lower()
 
-        category = self.category_service.create_category(
-            user.id,
-            category
-        )
+        filter_info = {
+            'user_id': user.id,
+            'description': category
+        }
 
-        record = self.record_service.create_record(
-            user.id,
-            category.id,
-            description,
-            amount
-        )
-
-        return f"Recorded income {amount} in {category.description} for {description}"
-
-    def add_spending(self, user, text):
-        components = text.split(',', 2)
-        amount = components[0]
-        category = components[1]
-        description = components[2] or ''
-        amount = float(amount) * -1
-        category = category.strip()
-        description = description.strip()
-
-        category = self.category_service.create_category(
-            user.id,
-            category
-        )
+        category = self.category_service.get_categories(**filter_info)[0]
+        if not category:
+            category = self.category_service.create_category(
+                user.id,
+                category
+            )
 
         record = self.record_service.create_record(
             user.id,
@@ -89,4 +81,33 @@ class ProcessChatService():
             description,
         )
 
-        return f"Recorded spending {amount} in {category.description} for {description}"
+        return f"Recorded income {amount} in {category.description} for {description}"
+
+    def add_spending(self, user, text):
+        components = text.split(',', 2)
+        amount = float(components[0]) * -1
+        category = components[1].strip()
+        description = components[2] or ''
+        category = category
+        description = description.strip().lower()
+
+        filter_info = {
+            'user_id': user.id,
+            'description': category
+        }
+
+        category = self.category_service.get_categories(**filter_info)[0]
+        if not category:
+            category = self.category_service.create_category(
+                user.id,
+                category
+            )
+
+        record = self.record_service.create_record(
+            user.id,
+            category.id,
+            amount,
+            description,
+        )
+
+        return f"Recorded spending {amount*-1} in {category.description} for {description}"

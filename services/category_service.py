@@ -23,7 +23,7 @@ class CategoryManagementService():
 
         return category
 
-    def get_category(self, **filter_info):
+    def get_categories(self, **filter_info):
         if filter_info['user_id']:
             user = self.user_management_service.get_user_by_id(
                 filter_info['user_id'])
@@ -39,7 +39,7 @@ class CategoryManagementService():
         category = self.category_service.find_by_id(category_id)
 
         if not category:
-            raise Exception("Category not found")
+            return None
 
         return category
 
