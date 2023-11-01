@@ -20,7 +20,7 @@ class User(Base):
 class Record(Base):
     __tablename__ = "records"
 
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(BIGINT, nullable=False)
     category_id = Column(String, nullable=False)
     amount = Column(Float, nullable=False)
@@ -34,7 +34,7 @@ class Record(Base):
 class Category(Base):
     __tablename__ = "categories"
 
-    id = Column(String, primary_key=True)
+    id = Column(Integer, primary_key=True)
     user_id = Column(BIGINT, nullable=False)
     description = Column(String, nullable=False)
     created_at = Column(DateTime, nullable=False,

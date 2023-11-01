@@ -1,4 +1,3 @@
-import uuid
 from sqlalchemy.orm import Session
 from sqlalchemy.orm import load_only
 from sqlalchemy import exc
@@ -71,8 +70,6 @@ class BaseService(object):
 
                 if hasattr(obj, key):
                     setattr(obj, key, data[p])
-            if 'id' not in data:
-                obj.id = str(uuid.uuid4())
             self.session.add(obj)
             self.session.commit()
             self.session.refresh(obj)
